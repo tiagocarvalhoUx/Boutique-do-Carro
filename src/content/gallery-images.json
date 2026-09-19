@@ -1,0 +1,100 @@
+{
+  "multimidia-hilux-2018-antes-depois": {
+    "sm": {
+      "width": 480,
+      "height": 637
+    },
+    "thumb": {
+      "width": 614,
+      "height": 815
+    },
+    "full": {
+      "width": 614,
+      "height": 815
+    }
+  },
+  "multimidia-yaris-9": {
+    "sm": {
+      "width": 480,
+      "height": 644
+    },
+    "thumb": {
+      "width": 614,
+      "height": 824
+    },
+    "full": {
+      "width": 614,
+      "height": 824
+    }
+  },
+  "multimidia-corolla-2017": {
+    "sm": {
+      "width": 480,
+      "height": 480
+    },
+    "thumb": {
+      "width": 900,
+      "height": 900
+    },
+    "full": {
+      "width": 1254,
+      "height": 1254
+    }
+  },
+  "multimidia-onix-prisma": {
+    "sm": {
+      "width": 480,
+      "height": 480
+    },
+    "thumb": {
+      "width": 900,
+      "height": 900
+    },
+    "full": {
+      "width": 1254,
+      "height": 1254
+    }
+  },
+  "multimidia-9-pol": {
+    "sm": {
+      "width": 480,
+      "height": 480
+    },
+    "thumb": {
+      "width": 900,
+      "height": 900
+    },
+    "full": {
+      "width": 1254,
+      "height": 1254
+    }
+  },
+  "ppf-kit-basico": {
+    "sm": {
+      "width": 480,
+      "height": 480
+    },
+    "thumb": {
+      "width": 900,
+      "height": 900
+    },
+    "full": {
+      "width": 1254,
+      "height": 1254
+    }
+  },
+  "pelicula-residencial": {
+    "sm": {
+      "width": 480,
+      "height": 480
+    },
+    "thumb": {
+      "width": 900,
+      "height": 900
+    },
+    "full": {
+      "width": 1254,
+      "height": 1254
+    }
+  }
+}
