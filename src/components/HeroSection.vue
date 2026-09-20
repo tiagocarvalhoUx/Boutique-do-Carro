@@ -3,7 +3,7 @@ import { ShieldCheck, ArrowDown } from 'lucide-vue-next'
 import { offer, business } from '../content/site'
 import { messages } from '../lib/whatsapp'
 import WhatsAppButton from './WhatsAppButton.vue'
-import HeadUnit3D from './HeadUnit3D.vue'
+import HeroVideo from './HeroVideo.vue'
 </script>
 
 <template>
@@ -37,7 +37,7 @@ import HeadUnit3D from './HeadUnit3D.vue'
         </p>
       </div>
 
-      <HeadUnit3D>
+      <HeroVideo>
         <div
           class="absolute -bottom-4 -left-2 z-10 flex items-center gap-3 rounded-card border border-brand/40 bg-ink-900 px-4 py-3 shadow-glow sm:-left-6"
         >
@@ -47,7 +47,7 @@ import HeadUnit3D from './HeadUnit3D.vue'
             <p class="text-xs font-medium uppercase tracking-wider text-fog">de garantia na instalação</p>
           </div>
         </div>
-      </HeadUnit3D>
+      </HeroVideo>
     </div>
   </section>
 </template>
