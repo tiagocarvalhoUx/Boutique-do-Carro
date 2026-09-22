@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ShieldCheck, ArrowDown } from 'lucide-vue-next'
+import { ArrowDown } from 'lucide-vue-next'
 import { offer, business } from '../content/site'
 import { messages } from '../lib/whatsapp'
 import WhatsAppButton from './WhatsAppButton.vue'
-import HeroVideo from './HeroVideo.vue'
+import HeadUnit3D from './HeadUnit3D.vue'
 </script>
 
 <template>
@@ -37,17 +37,7 @@ import HeroVideo from './HeroVideo.vue'
         </p>
       </div>
 
-      <HeroVideo>
-        <div
-          class="absolute -bottom-4 -left-2 z-10 flex items-center gap-3 rounded-card border border-brand/40 bg-ink-900 px-4 py-3 shadow-glow sm:-left-6"
-        >
-          <ShieldCheck :size="34" class="shrink-0 text-brand" aria-hidden="true" />
-          <div class="leading-tight">
-            <p class="font-display text-3xl font-extrabold uppercase text-brand">2 anos</p>
-            <p class="text-xs font-medium uppercase tracking-wider text-fog">de garantia na instalação</p>
-          </div>
-        </div>
-      </HeroVideo>
+      <HeadUnit3D />
     </div>
   </section>
 </template>

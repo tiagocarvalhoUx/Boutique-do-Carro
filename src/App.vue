@@ -2,6 +2,7 @@
 import SiteHeader from './components/SiteHeader.vue'
 import CoverBanner from './components/CoverBanner.vue'
 import HeroSection from './components/HeroSection.vue'
+import MultimediaExperience from './components/MultimediaExperience.vue'
 import ServicesSection from './components/ServicesSection.vue'
 import GallerySection from './components/GallerySection.vue'
 import DifferentialsSection from './components/DifferentialsSection.vue'
@@ -22,6 +23,7 @@ import WhatsAppFab from './components/WhatsAppFab.vue'
   <main>
     <CoverBanner />
     <HeroSection />
+    <MultimediaExperience />
     <ServicesSection />
     <GallerySection />
     <DifferentialsSection />
