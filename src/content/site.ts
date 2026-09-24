@@ -8,6 +8,8 @@ export const business = {
   city: 'Fortaleza',
   region: 'CE',
   postalCode: '60325-005',
+  // Geocodificado em 24/09/2026 a partir de Av. Bezerra de Menezes, 1199 (Nominatim/OSM).
+  geo: { latitude: -3.7341405, longitude: -38.5554165 },
   phoneDisplay: '(85) 99980-4447',
   phoneIntl: '+5585999804447',
   whatsappNumber: '5585999804447',

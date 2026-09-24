@@ -2,17 +2,16 @@
 //
 // Fonte: assets-src/central-1024.mp4 (30 fps, 437 frames). Fica fora de public/
 // porque é insumo de build: o site entrega os webp, não o vídeo.
-// O filme tem quatro atos; só o primeiro serve à experiência de scroll:
+//
+// O filme tem quatro atos e só o primeiro serve a um site da Boutique do Carro:
 //   frames   0–102  montada -> desmontagem -> exploded view   <- usado aqui
 //   frames 103–150  reveal de um logotipo que NÃO é o da Boutique do Carro
-//   frames 151–165  remontagem final ainda contaminada pelo logotipo
-//   frames 166–210  central limpa, tela liga e inicia o clipe neon  <- usado aqui
-//   frames 211–436  câmera entra na tela e abandona o produto
-// Por isso o recorte para em FRAME_END: é onde a exploded view está completa
-// e ainda não apareceu marca de terceiro. No componente, esses 103 frames são
-// reproduzidos de volta em ordem inversa para fechar a central com continuidade
-// pixel a pixel. Depois entram os frames 166–210: a tela liga e dá play sem mostrar
-// a marca de terceiro nem perder o aparelho do enquadramento.
+//   frames 151–210  central com a UI da marca fictícia "AuraDrive X1" em chinês
+//   frames 211–436  câmera entra na tela e vira um clipe neon/cyberpunk
+//
+// Por isso o recorte para em FRAME_END: é onde a exploded view está completa e
+// ainda não apareceu marca de terceiro. O componente reproduz esses 103 frames
+// de volta, em ordem inversa, para remontar a central sem baixar imagem nova.
 //
 // Requer ffmpeg no PATH. Rodar manualmente após trocar o vídeo de origem:
 //   node scripts/generate-teardown-frames.mjs
@@ -29,8 +28,6 @@ const outDir = path.join(root, 'public/img/teardown')
 const manifestPath = path.join(root, 'src/content/teardown-frames.json')
 
 const FRAME_END = 102
-const PLAY_START = 166
-const PLAY_END = 210
 const CORNER = 32
 const VARIANTS = [
   { key: 'sm', width: 720 },
@@ -66,26 +63,9 @@ try {
     ['-v', 'error', '-i', source, '-vf', `select='lte(n,${FRAME_END})'`, '-vsync', '0', path.join(tmp, 'src-%04d.png'), '-y'],
     { stdio: 'inherit' },
   )
-  execFileSync(
-    'ffmpeg',
-    [
-      '-v',
-      'error',
-      '-i',
-      source,
-      '-vf',
-      `select='between(n,${PLAY_START},${PLAY_END})'`,
-      '-vsync',
-      '0',
-      path.join(tmp, 'play-%04d.png'),
-      '-y',
-    ],
-    { stdio: 'inherit' },
-  )
 
   const sources = fs.readdirSync(tmp).filter((file) => file.startsWith('src-')).sort()
-  const playSources = fs.readdirSync(tmp).filter((file) => file.startsWith('play-')).sort()
-  if (!sources.length || !playSources.length) throw new Error('ffmpeg não extraiu todos os atos esperados')
+  if (!sources.length) throw new Error('ffmpeg não extraiu nenhum frame')
 
   for (const variant of VARIANTS) {
     fs.rmSync(path.join(outDir, variant.key), { recursive: true, force: true })
@@ -114,20 +94,6 @@ try {
     }
   }
 
-  for (const [index, file] of playSources.entries()) {
-    const input = path.join(tmp, file)
-    const name = `play-${String(index + 1).padStart(3, '0')}.webp`
-
-    for (const variant of VARIANTS) {
-      const data = await sharp(input)
-        .resize({ width: variant.width, withoutEnlargement: true })
-        .webp({ quality: 80, effort: 5 })
-        .toBuffer()
-      fs.writeFileSync(path.join(outDir, variant.key, name), data)
-      bytes += data.length
-    }
-  }
-
   const manifest = {
     count: sources.length,
     width: base.width,
@@ -138,17 +104,12 @@ try {
       height: Math.round((variant.width * base.height) / base.width),
       dir: `/img/teardown/${variant.key}`,
     })),
-    play: {
-      count: playSources.length,
-      sourceStart: PLAY_START,
-      sourceEnd: PLAY_END,
-    },
     backgrounds,
   }
 
   fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n')
   console.log(
-    `${sources.length} frames de abertura + ${playSources.length} de play x ${VARIANTS.length} variantes — ${(bytes / 1024 / 1024).toFixed(2)}MB`,
+    `${sources.length} frames x ${VARIANTS.length} variantes — ${(bytes / 1024 / 1024).toFixed(2)}MB`,
   )
 } finally {
   fs.rmSync(tmp, { recursive: true, force: true })

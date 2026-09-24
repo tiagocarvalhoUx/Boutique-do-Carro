@@ -1,7 +1,6 @@
 import { business, seo } from './site.ts'
 import { faq } from './faq.ts'
 
-// Sem lat/long: coordenadas exatas ainda não foram confirmadas. Adicionar `geo` aqui quando houver.
 export function buildJsonLd(siteUrl: string) {
   const localBusiness = {
     '@context': 'https://schema.org',
@@ -21,6 +20,11 @@ export function buildJsonLd(siteUrl: string) {
       addressRegion: business.region,
       postalCode: business.postalCode,
       addressCountry: 'BR',
+    },
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: business.geo.latitude,
+      longitude: business.geo.longitude,
     },
     areaServed: { '@type': 'City', name: business.city },
     makesOffer: [

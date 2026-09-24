@@ -10,7 +10,6 @@ import {
   Wrench,
   type LucideIcon,
 } from 'lucide-vue-next'
-import { offer } from '../content/site'
 import { messages, whatsappLink } from '../lib/whatsapp'
 
 type Service = {
@@ -63,10 +62,6 @@ const benefits = [
           e proteção <br />
           <span>para o seu carro em Fortaleza</span>
         </h1>
-        <p>
-          Instalação profissional com {{ offer.warranty }}, a partir de
-          <strong>{{ offer.priceFrom }}</strong> {{ offer.installments }}.
-        </p>
         <div class="showroom-hero__actions">
           <a
             :href="whatsappLink(messages.hero)"

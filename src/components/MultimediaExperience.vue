@@ -58,9 +58,8 @@ const sm = manifest.variants.find((item) => item.key === 'sm') ?? lg
 // duplicadas. O índice lógico, portanto, tem ida + volta; o cache físico continua
 // com apenas os 103 frames originais.
 const openLastIndex = manifest.count - 1
-const closeLastIndex = openLastIndex * 2
-const lastIndex = closeLastIndex + manifest.play.count
-const lastName = `play-${String(manifest.play.count).padStart(3, '0')}.webp`
+const lastIndex = openLastIndex * 2
+const lastName = `frame-${String(manifest.count).padStart(3, '0')}.webp`
 const stillSrc = `${lg.dir}/${lastName}`
 const stillSrcset = `${sm.dir}/${lastName} ${sm.width}w, ${stillSrc} ${lg.width}w`
 
@@ -102,9 +101,8 @@ const SHADE_KNEE = 'rgba(9, 10, 12, 0.78)'
 const SHADE_SOLID = 'rgba(9, 10, 12, 0.95)'
 
 const teardownFrames: (HTMLImageElement | null)[] = new Array(manifest.count).fill(null)
-const playFrames: (HTMLImageElement | null)[] = new Array(manifest.play.count).fill(null)
 const playhead = { frame: 0 }
-const view = { zoom: 0.95, y: 6, shade: 0 }
+const view = { zoom: 0.95, y: 6 }
 
 let context2d: CanvasRenderingContext2D | null = null
 let backdrop2d: CanvasRenderingContext2D | null = null
@@ -112,7 +110,6 @@ let variant = lg
 let drawnImage: HTMLImageElement | null = null
 let drawnZoom = Number.NaN
 let drawnY = Number.NaN
-let drawnShade = Number.NaN
 let aborted = false
 
 let gsapContext: gsap.Context | undefined
@@ -121,8 +118,8 @@ let intersection: IntersectionObserver | undefined
 let stageResize: ResizeObserver | undefined
 let detachRefresh: (() => void) | undefined
 
-function frameSrc(index: number, prefix: 'frame' | 'play') {
-  return `${variant.dir}/${prefix}-${String(index + 1).padStart(3, '0')}.webp`
+function frameSrc(index: number) {
+  return `${variant.dir}/frame-${String(index + 1).padStart(3, '0')}.webp`
 }
 
 /** Índice do frame carregado mais próximo do pedido, preferindo os anteriores. */
@@ -140,19 +137,16 @@ function render() {
   if (!canvas || !context2d || !backdrop2d || !canvas.width || !canvas.height) return
 
   const playbackIndex = Math.min(lastIndex, Math.max(0, Math.round(playhead.frame)))
-  const isPlayAct = playbackIndex > closeLastIndex
-  const collection = isPlayAct ? playFrames : teardownFrames
-  const sourceIndex = isPlayAct
-    ? playbackIndex - closeLastIndex - 1
-    : playbackIndex <= openLastIndex
-      ? playbackIndex
-      : closeLastIndex - playbackIndex
+  // Passado o pico da vista explodida, o índice espelha: a central remonta
+  // reaproveitando os mesmos arquivos ao contrário.
+  const sourceIndex = playbackIndex <= openLastIndex ? playbackIndex : lastIndex - playbackIndex
+  const collection = teardownFrames
   const index = nearestLoaded(collection, sourceIndex)
   if (index < 0) return
 
   const image = collection[index]
   if (!image) return
-  if (image === drawnImage && view.zoom === drawnZoom && view.y === drawnY && view.shade === drawnShade) return
+  if (image === drawnImage && view.zoom === drawnZoom && view.y === drawnY) return
 
   const ctx = context2d
   const { width, height } = canvas
@@ -202,15 +196,6 @@ function render() {
 
   // Um breve blackout esconde a troca de tomada entre o aparelho remontado e o
   // mesmo produto ligando a tela; assim a mudança de escala parece intencional.
-  if (view.shade > 0) {
-    ctx.fillStyle = `rgba(9, 10, 12, ${view.shade})`
-    ctx.fillRect(0, 0, width, height)
-  }
-
-  drawnImage = image
-  drawnZoom = view.zoom
-  drawnY = view.y
-  drawnShade = view.shade
 }
 
 function resizeCanvas() {
@@ -229,7 +214,7 @@ function resizeCanvas() {
   render()
 }
 
-function loadFrame(collection: (HTMLImageElement | null)[], index: number, prefix: 'frame' | 'play') {
+function loadFrame(collection: (HTMLImageElement | null)[], index: number) {
   return new Promise<void>((resolve) => {
     if (aborted || collection[index]) return resolve()
     const image = new Image()
@@ -242,30 +227,28 @@ function loadFrame(collection: (HTMLImageElement | null)[], index: number, prefi
       resolve()
     }
     image.onerror = () => resolve()
-    image.src = frameSrc(index, prefix)
+    image.src = frameSrc(index)
   })
 }
 
 async function loadRange(
   collection: (HTMLImageElement | null)[],
-  prefix: 'frame' | 'play',
   from: number,
   to: number,
   concurrency: number,
 ) {
   let cursor = from
   const workers = Array.from({ length: Math.min(concurrency, Math.max(0, to - from)) }, async () => {
-    while (cursor < to && !aborted) await loadFrame(collection, cursor++, prefix)
+    while (cursor < to && !aborted) await loadFrame(collection, cursor++)
   })
   await Promise.all(workers)
 }
 
 async function loadSequence() {
-  await loadFrame(teardownFrames, 0, 'frame')
+  await loadFrame(teardownFrames, 0)
   render()
-  await loadRange(teardownFrames, 'frame', 1, Math.min(24, manifest.count), 4)
-  await loadRange(teardownFrames, 'frame', 24, manifest.count, 6)
-  await loadRange(playFrames, 'play', 0, manifest.play.count, 6)
+  await loadRange(teardownFrames, 1, Math.min(24, manifest.count), 4)
+  await loadRange(teardownFrames, 24, manifest.count, 6)
   render()
 }
 
@@ -342,11 +325,11 @@ async function setupMotion() {
       },
       (self) => {
         const { isDesktop, isTablet } = self.conditions as Record<string, boolean>
-        const distance = isDesktop ? 760 : isTablet ? 600 : 460
+        const distance = isDesktop ? 620 : isTablet ? 490 : 380
         // No retrato o contain já ocupa toda a largura: um push-in curto dá presença
         // ao produto sem cortar nenhuma peça da vista explodida.
         const zoom = isDesktop || isTablet ? { from: 0.95, to: 1.01 } : { from: 1, to: 1.06 }
-        const playZoom = zoom.from * 0.87
+        const ctaZoom = zoom.from * 0.87
 
         const timeline = gsap.timeline({
           defaults: { ease: 'none' },
@@ -362,25 +345,23 @@ async function setupMotion() {
           },
         })
 
-        // 0–4% montada · 4–29% abrindo · 29–35% explodida · 35–60% fechando ·
-        // 60–67% transição escura · 67–94% tela ligando e dando play · 94–100% CTA.
-        timeline.to(playhead, { frame: openLastIndex, duration: 0.25 }, 0.04)
-        timeline.to(playhead, { frame: closeLastIndex, duration: 0.25 }, 0.35)
-        timeline.to(playhead, { frame: lastIndex, duration: 0.27 }, 0.67)
+        // 0–4% montada · 4–48% abrindo · 48–72% vista explodida em cena ·
+        // 72–94% remontando · 94–100% CTA.
+        timeline.to(playhead, { frame: openLastIndex, duration: 0.44 }, 0.04)
+        timeline.to(playhead, { frame: lastIndex, duration: 0.22 }, 0.72)
         timeline.fromTo(
           view,
-          { zoom: zoom.from, y: 6, shade: 0 },
-          { zoom: zoom.to, y: -6, duration: 0.25 },
+          { zoom: zoom.from, y: 6 },
+          { zoom: zoom.to, y: -6, duration: 0.44 },
           0.04,
         )
-        timeline.to(view, { zoom: zoom.from, y: 6, duration: 0.25 }, 0.35)
-        timeline.to(view, { shade: 0.94, duration: 0.04, ease: 'power2.in' }, 0.62)
-        timeline.to(view, { zoom: playZoom, y: 18, duration: 0.01 }, 0.66)
-        timeline.to(view, { shade: 0, duration: 0.05, ease: 'power2.out' }, 0.67)
-        timeline.to(ctaScrimEl.value, { autoAlpha: 1, duration: 0.05 }, 0.72)
-        // Sustenta o vídeo no aparelho até o fim da área fixada e garante que a
-        // timeline tenha exatamente 100% de duração.
-        timeline.to(view, { zoom: playZoom, y: 18, duration: 0.06 }, 0.94)
+        timeline.to(view, { zoom: zoom.from, y: 6, duration: 0.22 }, 0.72)
+        // O véu entra junto com a abertura: da vista explodida em diante o frame
+        // fica claro e o texto branco perdia contraste sobre as peças.
+        timeline.to(ctaScrimEl.value, { autoAlpha: 1, duration: 0.08 }, 0.26)
+        // Afasta a central no fim para o CTA respirar, e garante que a timeline
+        // tenha exatamente 100% de duração.
+        timeline.to(view, { zoom: ctaZoom, y: 18, duration: 0.06 }, 0.94)
 
         chapters.forEach((chapter, index) => {
           const el = chapterEls[index]
@@ -413,7 +394,6 @@ function teardown() {
   stageResize?.disconnect()
   stageResize = undefined
   teardownFrames.fill(null)
-  playFrames.fill(null)
   drawnImage = null
   context2d = null
   backdrop2d = null

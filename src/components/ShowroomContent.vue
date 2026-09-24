@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import {
   ArrowRight,
   ChevronRight,
@@ -10,6 +11,7 @@ import {
   Settings,
   ShieldCheck,
   Store,
+  ZoomIn,
   Tag,
   UsersRound,
   Wrench,
@@ -19,6 +21,11 @@ import { business, mapLinkUrl } from '../content/site'
 import { faq } from '../content/faq'
 import { gallery, galleryImage } from '../content/gallery'
 import { messages, whatsappLink } from '../lib/whatsapp'
+import GalleryLightbox from './GalleryLightbox.vue'
+
+// A seção mostra seis trabalhos; o lightbox navega exatamente esses seis.
+const galeria = gallery.slice(0, 6)
+const ampliada = ref<number | null>(null)
 
 type Step = { number: string; icon: LucideIcon; title: string; text: string }
 type Differential = { icon: LucideIcon; title: string; text: string }
@@ -120,7 +127,13 @@ const differentials: Differential[] = [
       </div>
 
       <ul class="showroom-proof-grid">
-        <li v-for="item in gallery.slice(0, 6)" :key="item.id" class="showroom-proof-card">
+        <li v-for="(item, index) in galeria" :key="item.id" class="showroom-proof-card">
+          <button
+            type="button"
+            class="showroom-proof-card__zoom"
+            :aria-label="`Ampliar: ${item.service} — ${item.detail}`"
+            @click="ampliada = index"
+          >
           <img
             :src="galleryImage(item, 'thumb').src"
             :srcset="`${galleryImage(item, 'sm').src} ${galleryImage(item, 'sm').width}w, ${galleryImage(item, 'thumb').src} ${galleryImage(item, 'thumb').width}w`"
@@ -131,6 +144,10 @@ const differentials: Differential[] = [
             loading="lazy"
             decoding="async"
           />
+            <span class="showroom-proof-card__hint" aria-hidden="true">
+              <ZoomIn :size="17" /> Ampliar
+            </span>
+          </button>
           <div class="showroom-proof-card__body">
             <h3>{{ item.service }}</h3>
             <p>{{ item.detail }}</p>
@@ -145,6 +162,8 @@ const differentials: Differential[] = [
           </div>
         </li>
       </ul>
+
+      <GalleryLightbox v-model:index="ampliada" :items="galeria" />
     </div>
   </section>
 
@@ -411,6 +430,45 @@ const differentials: Differential[] = [
   border: 1px solid #385069;
   border-radius: 4px;
   background: rgba(5, 15, 24, 0.64);
+}
+
+.showroom-proof-card__zoom {
+  position: relative;
+  display: block;
+  width: 100%;
+  cursor: zoom-in;
+  background: none;
+}
+
+.showroom-proof-card__hint {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  opacity: 0;
+  background: rgba(4, 13, 22, 0.86);
+  color: var(--showroom-yellow);
+  font-family: var(--showroom-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  transition: opacity 180ms ease;
+}
+
+.showroom-proof-card__zoom:hover .showroom-proof-card__hint,
+.showroom-proof-card__zoom:focus-visible .showroom-proof-card__hint {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .showroom-proof-card__hint {
+    transition: none;
+  }
 }
 
 .showroom-proof-card img {
