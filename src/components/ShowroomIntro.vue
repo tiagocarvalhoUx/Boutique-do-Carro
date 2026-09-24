@@ -82,7 +82,6 @@ const benefits = [
           <span></span> Som&nbsp;&nbsp;•&nbsp;&nbsp;Estilo&nbsp;&nbsp;•&nbsp;&nbsp;Conforto&nbsp;&nbsp;•&nbsp;&nbsp;Performance
         </div>
       </div>
-      <p class="showroom-hero__side-copy">Qualidade<br />que anda<br />com você</p>
     </div>
   </section>
 
@@ -214,17 +213,6 @@ const benefits = [
   background: var(--showroom-yellow);
 }
 
-.showroom-hero__side-copy {
-  position: absolute;
-  top: 18px;
-  right: 8px;
-  color: #a7b2bd;
-  font-size: 0.71rem;
-  font-weight: 600;
-  letter-spacing: 0.4em;
-  line-height: 1.6;
-  text-transform: uppercase;
-}
 
 .showroom-benefits {
   border-bottom: 1px solid var(--showroom-line);
@@ -360,8 +348,8 @@ const benefits = [
   .showroom-hero {
     min-height: 620px;
     background:
-      linear-gradient(180deg, rgba(6, 17, 27, 0.15) 20%, #06111b 67%),
-      url('/img/showroom/hero-showroom.webp') 68% top / auto 58% no-repeat,
+      linear-gradient(180deg, rgba(6, 17, 27, 0.08) 10%, rgba(6, 17, 27, 0.9) 42%, #06111b 50%),
+      url('/img/showroom/hero-showroom.webp') 68% top / auto 50% no-repeat,
       #06111b;
   }
 
@@ -375,9 +363,6 @@ const benefits = [
     padding-bottom: 30px;
   }
 
-  .showroom-hero__side-copy {
-    display: none;
-  }
 
   .showroom-benefits__grid {
     grid-template-columns: 1fr;
