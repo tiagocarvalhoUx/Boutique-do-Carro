@@ -134,12 +134,13 @@ onBeforeUnmount(() => observers.forEach((o) => o.disconnect()))
 }
 
 /* Desktop: botão flutuante, sem tapar conteúdo. */
+/* Desktop: só o WhatsApp. Dois botões empilhados ocupavam altura demais e
+   passavam por cima dos títulos de seção; `tel:` também rende pouco no desktop,
+   e o telefone já aparece no cabeçalho e na seção de contato. */
 @media (min-width: 768px) {
   .showroom-cta {
     right: 24px;
     bottom: 24px;
-    flex-direction: column-reverse;
-    align-items: flex-end;
     transform: translateY(10px);
   }
 
@@ -147,9 +148,8 @@ onBeforeUnmount(() => observers.forEach((o) => o.disconnect()))
     padding: 0 22px;
   }
 
-  .showroom-cta__phone {
-    min-height: 46px;
-    font-size: 0.95rem;
+  .showroom-cta a.showroom-cta__phone {
+    display: none;
   }
 }
 

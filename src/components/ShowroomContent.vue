@@ -50,16 +50,20 @@ const differentials: Differential[] = [
         </a>
       </div>
 
-      <figure class="showroom-before-after">
-        <img
-          :src="galleryImage(gallery[0], 'thumb').src"
-          :width="galleryImage(gallery[0], 'thumb').width"
-          :height="galleryImage(gallery[0], 'thumb').height"
-          :alt="gallery[0].alt"
-          loading="lazy"
-          decoding="async"
-        />
-      </figure>
+      <ul class="showroom-work__thumbs">
+        <li v-for="item in gallery.slice(0, 3)" :key="item.id">
+          <img
+            :src="galleryImage(item, 'thumb').src"
+            :srcset="`${galleryImage(item, 'sm').src} ${galleryImage(item, 'sm').width}w, ${galleryImage(item, 'thumb').src} ${galleryImage(item, 'thumb').width}w`"
+            sizes="(min-width: 900px) 300px, 33vw"
+            :width="galleryImage(item, 'thumb').width"
+            :height="galleryImage(item, 'thumb').height"
+            :alt="item.alt"
+            loading="lazy"
+            decoding="async"
+          />
+        </li>
+      </ul>
 
       <p class="showroom-work__side">A mesma<br />paixão,<br /><strong>mais</strong><br />tecnologia<span></span></p>
     </div>
@@ -235,18 +239,26 @@ const differentials: Differential[] = [
   margin-top: 15px;
 }
 
-.showroom-before-after {
+.showroom-work__thumbs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.showroom-work__thumbs li {
   overflow: hidden;
   border: 1px solid #385069;
   border-radius: 4px;
   background: #07111a;
 }
 
-.showroom-before-after img {
+/* As artes do cliente misturam quadrado e retrato:  mostra cada uma
+   inteira, e o fundo escuro do card faz a sobra desaparecer. */
+.showroom-work__thumbs img {
   display: block;
   width: 100%;
-  height: 160px;
-  object-fit: cover;
+  height: 186px;
+  object-fit: contain;
 }
 
 .showroom-work__side {
@@ -405,8 +417,9 @@ const differentials: Differential[] = [
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
+  aspect-ratio: 1 / 1;
+  object-fit: contain;
+  background: #07111a;
 }
 
 .showroom-proof-card__body {
@@ -748,8 +761,12 @@ const differentials: Differential[] = [
 }
 
 @media (max-width: 560px) {
-  .showroom-before-after img {
-    height: auto;
+  .showroom-work__thumbs {
+    grid-template-columns: 1fr;
+  }
+
+  .showroom-work__thumbs img {
+    height: 220px;
   }
 
   .showroom-differentials__car,
