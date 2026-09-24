@@ -3,7 +3,7 @@ import path from 'node:path'
 import sharp from 'sharp'
 
 const root = path.resolve(import.meta.dirname, '..')
-const srcDir = path.resolve(root, '../cliente-boutique-do-carro/assets/originais/imagens')
+const srcDir = path.resolve(root, '../cliente/originais/imagens')
 const outDir = path.join(root, 'public/img/gallery')
 
 const sources = {

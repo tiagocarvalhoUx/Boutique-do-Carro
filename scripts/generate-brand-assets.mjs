@@ -3,10 +3,10 @@ import path from 'node:path'
 import sharp from 'sharp'
 
 const root = path.resolve(import.meta.dirname, '..')
-const source = path.resolve(root, '../cliente-boutique-do-carro/assets/originais/logo/botique-logo.png')
+const source = path.resolve(root, '../cliente/originais/logo/botique-logo.png')
 const pub = path.join(root, 'public')
-const cover = path.resolve(root, '../cliente-boutique-do-carro/assets/originais/capa/capa-botique.png')
-const heroArt = path.resolve(root, '../cliente-boutique-do-carro/assets/originais/hero/mutimidia-3d.png')
+const cover = path.resolve(root, '../cliente/originais/capa/capa-botique.png')
+const heroArt = path.resolve(root, '../cliente/originais/hero/mutimidia-3d.png')
 const ink950 = { r: 9, g: 10, b: 12, alpha: 1 }
 
 // Recorta a margem transparente (ignora o brilho quase invisível) e deixa o logo quadrado.

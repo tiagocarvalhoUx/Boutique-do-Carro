@@ -3,7 +3,7 @@ import path from 'node:path'
 import sharp from 'sharp'
 
 const root = path.resolve(import.meta.dirname, '..')
-const source = path.resolve(root, '../cliente-boutique-do-carro/assets/originais/hero/mutimidia-3d.png')
+const source = path.resolve(root, '../cliente/originais/hero/mutimidia-3d.png')
 const cfg = JSON.parse(fs.readFileSync(path.join(root, 'src/content/hu3d-layers.json'), 'utf-8'))
 const { width: W } = await sharp(source).metadata()
 const H = (W * cfg.aspect[1]) / cfg.aspect[0]

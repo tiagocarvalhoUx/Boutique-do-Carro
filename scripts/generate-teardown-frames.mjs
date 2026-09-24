@@ -1,6 +1,7 @@
 // Gera a sequência de frames da experiência "desmontagem" (MultimediaExperience.vue).
 //
-// Fonte: public/video/central-1024.mp4 (30 fps, 437 frames).
+// Fonte: assets-src/central-1024.mp4 (30 fps, 437 frames). Fica fora de public/
+// porque é insumo de build: o site entrega os webp, não o vídeo.
 // O filme tem quatro atos; só o primeiro serve à experiência de scroll:
 //   frames   0–102  montada -> desmontagem -> exploded view   <- usado aqui
 //   frames 103–150  reveal de um logotipo que NÃO é o da Boutique do Carro
@@ -23,7 +24,7 @@ import path from 'node:path'
 import sharp from 'sharp'
 
 const root = path.resolve(import.meta.dirname, '..')
-const source = path.join(root, 'public/video/central-1024.mp4')
+const source = path.join(root, 'assets-src/central-1024.mp4')
 const outDir = path.join(root, 'public/img/teardown')
 const manifestPath = path.join(root, 'src/content/teardown-frames.json')
 
