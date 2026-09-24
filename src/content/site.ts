@@ -7,7 +7,10 @@ export const business = {
   neighborhood: 'Parquelândia / Farias Brito',
   city: 'Fortaleza',
   region: 'CE',
-  postalCode: '60325-005',
+  // CEP do nº 1199 confirmado por geocodificação reversa (OSM) e checado no ViaCEP:
+  // 60325-004 é o trecho de Parquelândia. O card do Google mostra 60325-003, que
+  // pelo ViaCEP pertence a Parque Araxá.
+  postalCode: '60325-004',
   // Geocodificado em 24/09/2026 a partir de Av. Bezerra de Menezes, 1199 (Nominatim/OSM).
   geo: { latitude: -3.7341405, longitude: -38.5554165 },
   phoneDisplay: '(85) 99980-4447',
