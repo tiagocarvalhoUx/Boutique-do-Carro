@@ -95,3 +95,7 @@ fs.writeFileSync(
   ) + '\n',
 )
 console.log('crop', { left, top, side })
+
+// Garante que uma regeneração completa da marca termine sempre com o favicon
+// baseado no novo logo horizontal usado pela página showroom.
+await import('./generate-showroom-favicons.mjs')

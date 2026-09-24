@@ -468,7 +468,7 @@ onBeforeUnmount(teardown)
       ></div>
 
       <div
-        class="absolute inset-0 z-10 flex items-end pb-[max(2.5rem,env(safe-area-inset-bottom))] lg:items-center lg:pb-0"
+        class="absolute inset-0 z-10 flex items-end pb-[max(7rem,calc(5.5rem+env(safe-area-inset-bottom)))] lg:pb-0 lg:items-center"
       >
         <div class="container">
           <div class="grid max-w-xl pe-20 lg:max-w-[26rem] lg:pe-0">

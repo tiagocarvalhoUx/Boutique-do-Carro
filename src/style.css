@@ -102,3 +102,192 @@
     opacity: 0;
   }
 }
+
+:root {
+  --showroom-yellow: #ffc400;
+  --showroom-yellow-hover: #ffd43b;
+  --showroom-bg: #06111b;
+  --showroom-bg-deep: #030b12;
+  --showroom-line: rgba(55, 82, 105, 0.58);
+  --showroom-muted: #9ca9b5;
+  --showroom-display: 'Barlow Condensed', Impact, sans-serif;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+  background: var(--showroom-bg);
+}
+
+a {
+  text-decoration: none;
+}
+
+button,
+a,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.showroom-container {
+  width: min(100% - 40px, 1408px);
+  margin-inline: auto;
+}
+
+.showroom-rule-section {
+  position: relative;
+  border-bottom: 1px solid var(--showroom-line);
+  background:
+    repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.012) 0 1px, transparent 1px 11px),
+    var(--showroom-bg);
+}
+
+.showroom-section-head {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.showroom-eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  color: var(--showroom-yellow);
+  font-size: 0.63rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.showroom-eyebrow span {
+  width: 34px;
+  height: 3px;
+  background: var(--showroom-yellow);
+}
+
+.showroom-title {
+  margin-top: 7px;
+  color: white;
+  font-family: var(--showroom-display);
+  font-size: clamp(1.55rem, 2.1vw, 2.15rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 0.98;
+  text-transform: uppercase;
+}
+
+.showroom-title--large {
+  font-size: clamp(2rem, 2.55vw, 2.75rem);
+}
+
+.showroom-button {
+  display: inline-flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  padding: 10px 22px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  text-transform: uppercase;
+  transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.showroom-button:hover {
+  transform: translateY(-1px);
+}
+
+.showroom-button--primary {
+  background: var(--showroom-yellow);
+  color: #071019;
+}
+
+.showroom-button--primary:hover {
+  background: var(--showroom-yellow-hover);
+}
+
+.showroom-button--outline {
+  border-color: #d8dee4;
+  background: rgba(4, 13, 22, 0.62);
+  color: white;
+}
+
+.showroom-button--outline:hover {
+  border-color: var(--showroom-yellow);
+  color: var(--showroom-yellow);
+}
+
+.showroom-button--yellow {
+  border-color: var(--showroom-yellow);
+  color: var(--showroom-yellow);
+}
+
+.showroom-text-link {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  gap: 10px;
+  color: #aeb9c3;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.showroom-text-link:hover {
+  color: var(--showroom-yellow);
+}
+
+.showroom-round-arrow {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--showroom-yellow);
+  border-radius: 50%;
+  color: var(--showroom-yellow);
+}
+
+.showroom-skip-link {
+  position: fixed;
+  z-index: 100;
+  top: 12px;
+  left: 12px;
+  transform: translateY(-160%);
+  border-radius: 4px;
+  background: var(--showroom-yellow);
+  padding: 10px 16px;
+  color: #071019;
+  font-weight: 800;
+}
+
+.showroom-skip-link:focus {
+  transform: none;
+}
+
+.showroom-gsap-preserved {
+  position: relative;
+  isolation: isolate;
+  border-bottom: 1px solid var(--showroom-line);
+}
+
+@media (max-width: 700px) {
+  .showroom-container {
+    width: min(100% - 28px, 1408px);
+  }
+}
+
+/* A barra fixa de CTA cobre ~72px no rodape do celular: reserva o espaco para
+   ela nao tapar o fim da pagina. */
+@media (max-width: 767px) {
+  body {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom)); /* showroom-cta-espaco */
+  }
+}

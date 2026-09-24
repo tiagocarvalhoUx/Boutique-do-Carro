@@ -24,6 +24,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "favicons": "node scripts/generate-showroom-favicons.mjs",
     "typecheck": "vue-tsc --noEmit",
     "build": "vue-tsc --noEmit && vite build && vite build --ssr src/entry-server.ts --outDir dist-ssr && node scripts/prerender.mjs && node scripts/generate-seo.mjs",
     "preview": "vite preview"

@@ -7,3 +7,6 @@ dist-ssr
 *.log
 .vercel
 .DS_Store
+
+# QA local: perfil do Chrome e capturas de referencia nao vao para o repositorio
+.qa/

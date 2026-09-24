@@ -1,35 +1,20 @@
 <script setup lang="ts">
-import SiteHeader from './components/SiteHeader.vue'
-import CoverBanner from './components/CoverBanner.vue'
-import HeroSection from './components/HeroSection.vue'
+import ShowroomHeader from './components/ShowroomHeader.vue'
+import ShowroomIntro from './components/ShowroomIntro.vue'
 import MultimediaExperience from './components/MultimediaExperience.vue'
-import ServicesSection from './components/ServicesSection.vue'
-import GallerySection from './components/GallerySection.vue'
-import DifferentialsSection from './components/DifferentialsSection.vue'
-import FaqSection from './components/FaqSection.vue'
-import ContactSection from './components/ContactSection.vue'
-import SiteFooter from './components/SiteFooter.vue'
-import WhatsAppFab from './components/WhatsAppFab.vue'
+import ShowroomContent from './components/ShowroomContent.vue'
+import ShowroomCta from './components/ShowroomCta.vue'
 </script>
 
 <template>
-  <a
-    href="#servicos"
-    class="sr-only z-50 rounded-full bg-brand px-4 py-2 font-bold text-ink-950 focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
-  >
-    Pular para o conteúdo
-  </a>
-  <SiteHeader />
+  <a href="#conteudo" class="showroom-skip-link">Pular para o conteúdo</a>
+  <ShowroomHeader />
   <main>
-    <CoverBanner />
-    <HeroSection />
-    <MultimediaExperience />
-    <ServicesSection />
-    <GallerySection />
-    <DifferentialsSection />
-    <FaqSection />
-    <ContactSection />
+    <ShowroomIntro />
+    <div class="showroom-gsap-preserved" aria-label="Experiência interativa da central multimídia">
+      <MultimediaExperience />
+    </div>
+    <ShowroomContent />
   </main>
-  <SiteFooter />
-  <WhatsAppFab />
+  <ShowroomCta />
 </template>
