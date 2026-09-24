@@ -5,6 +5,7 @@ import {
   ChevronRight,
   Instagram,
   MapPin,
+  ExternalLink,
   MessageCircle,
   Phone,
   Plus,
@@ -17,7 +18,7 @@ import {
   Wrench,
   type LucideIcon,
 } from 'lucide-vue-next'
-import { business, mapLinkUrl } from '../content/site'
+import { business, mapEmbedUrl, mapLinkUrl } from '../content/site'
 import { faq } from '../content/faq'
 import { gallery, galleryImage } from '../content/gallery'
 import { messages, whatsappLink } from '../lib/whatsapp'
@@ -188,7 +189,6 @@ const differentials: Differential[] = [
   </section>
 
   <section id="contato" class="showroom-contact showroom-rule-section" aria-labelledby="contact-title">
-    <div class="showroom-contact__map" aria-hidden="true"></div>
     <div class="showroom-container showroom-contact__layout">
       <div class="showroom-contact__intro">
         <p class="showroom-eyebrow"><span></span>Venha nos visitar</p>
@@ -198,7 +198,14 @@ const differentials: Differential[] = [
       <address class="showroom-contact__details">
         <a :href="mapLinkUrl" target="_blank" rel="noopener noreferrer">
           <MapPin :size="28" aria-hidden="true" />
-          <span><strong>{{ business.streetAddress }}</strong><small>{{ business.neighborhood }} · {{ business.city }}-{{ business.region }}</small></span>
+          <span>
+            <strong>{{ business.streetAddress }}</strong>
+            <small>{{ business.neighborhood }}</small>
+            <small>{{ business.city }}-{{ business.region }}, {{ business.postalCode }}</small>
+          </span>
+        </a>
+        <a :href="mapLinkUrl" target="_blank" rel="noopener noreferrer" class="showroom-contact__route">
+          Abrir no Google Maps <ExternalLink :size="16" aria-hidden="true" />
         </a>
         <a :href="`tel:${business.phoneIntl}`">
           <Phone :size="27" aria-hidden="true" />
@@ -208,6 +215,15 @@ const differentials: Differential[] = [
           <MessageCircle :size="20" aria-hidden="true" /> Falar no WhatsApp <ArrowRight :size="18" />
         </a>
       </address>
+
+      <div class="showroom-contact__map">
+        <iframe
+          :src="mapEmbedUrl"
+          title="Mapa da localização da Boutique do Carro na Av. Bezerra de Menezes, 1199, Fortaleza"
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </div>
     </div>
   </section>
 
@@ -591,18 +607,44 @@ const differentials: Differential[] = [
 }
 
 .showroom-contact__map {
-  position: absolute;
-  inset: 0 0 0 320px;
-  background:
-    linear-gradient(90deg, #06111b 0%, rgba(6, 17, 27, 0.5) 30%, rgba(6, 17, 27, 0.08) 70%),
-    url('/img/showroom/mapa.webp') right center / cover no-repeat;
+  overflow: hidden;
+  height: 250px;
+  border: 1px solid var(--showroom-line);
+  border-radius: 6px;
+  background: #06111b;
+}
+
+.showroom-contact__map iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.showroom-contact__route {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--showroom-yellow);
+  font-family: var(--showroom-display);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: color 180ms ease;
+}
+
+.showroom-contact__route:hover {
+  color: var(--showroom-yellow-hover);
 }
 
 .showroom-contact__layout {
   position: relative;
   display: grid;
-  grid-template-columns: 330px 1fr;
-  gap: 65px;
+  grid-template-columns: 330px minmax(0, 1fr) minmax(0, 1.1fr);
+  align-items: center;
+  gap: 48px;
 }
 
 .showroom-contact__details {
@@ -802,8 +844,7 @@ const differentials: Differential[] = [
   }
 
   .showroom-contact__map {
-    left: 0;
-    opacity: 0.34;
+    height: 280px;
   }
 
   .showroom-footer__inner {
@@ -856,7 +897,7 @@ const differentials: Differential[] = [
   }
 
   .showroom-contact__map {
-    inset: 0;
+    height: 230px;
   }
 
   .showroom-contact__details .showroom-button {
