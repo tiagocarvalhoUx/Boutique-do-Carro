@@ -14,51 +14,57 @@ type Chapter = {
   out: number | null
 }
 
+// TESTE: retimed para o arco linear de 40 frames (fechada -> abrindo ->
+// explodida -> remontando -> tela ligada em uso). Os textos são os mesmos;
+// só a marcação de entrada/saída mudou para acompanhar os novos frames.
 const chapters: Chapter[] = [
   {
     eyebrow: 'Tecnologia no seu painel',
     title: 'Muito mais que uma tela.',
     text: 'Uma central completa para transformar a experiência dentro do seu carro.',
     in: 0,
-    out: 0.13,
+    out: 0.16,
   },
   {
     title: 'Conectividade sem complicação.',
     text: 'Apple CarPlay e Android Auto integrados à sua rotina.',
-    in: 0.15,
-    out: 0.27,
+    in: 0.19,
+    out: 0.34,
   },
   {
     title: 'Tecnologia por dentro.',
     text: 'Hardware pensado para entregar uma experiência rápida, moderna e integrada.',
-    in: 0.29,
-    out: 0.43,
+    in: 0.37,
+    out: 0.56,
   },
   {
     title: 'Cada detalhe importa.',
     text: 'Da tela aos componentes internos, uma experiência feita para transformar seu painel.',
-    in: 0.45,
-    out: 0.64,
+    in: 0.59,
+    out: 0.78,
   },
   {
     title: 'Pronto para transformar seu carro?',
     cta: 'Ver opção para meu carro',
-    in: 0.76,
+    in: 0.82,
     out: null,
   },
 ]
 
 const sequenceAlt =
-  'Central multimídia automotiva que se abre em vista explodida, revela seus componentes, fecha completamente, liga a tela e inicia a reprodução de um vídeo.'
+  'Central multimídia automotiva que se abre em vista explodida, revela seus componentes, remonta e liga a tela, mostrando a interface de navegação em uso.'
 
 const lg = manifest.variants.find((item) => item.key === 'lg') ?? manifest.variants[0]
 const sm = manifest.variants.find((item) => item.key === 'sm') ?? lg
-// O filme original termina aberto. A reprodução usa os mesmos frames no caminho
-// inverso para remontar a central com continuidade perfeita e sem baixar imagens
-// duplicadas. O índice lógico, portanto, tem ida + volta; o cache físico continua
-// com apenas os 103 frames originais.
+// TESTE: a fonte em public/ezgif-cetral/ já é um arco de ida só (fechada ->
+// explodida -> remontada -> tela ligada), então sequenceMode é "linear" e o
+// índice lógico bate 1:1 com o frame físico — sem espelhar. A fonte antiga
+// (assets-src/central-1024.mp4) termina aberta, então o componente reproduzia
+// os mesmos frames de volta para fechar; esse caminho continua aqui, escolhido
+// pelo manifesto, para reverter bastar trocar o manifesto/assets de volta.
+const isLinearSequence = (manifest as { sequenceMode?: string }).sequenceMode === 'linear'
 const openLastIndex = manifest.count - 1
-const lastIndex = openLastIndex * 2
+const lastIndex = isLinearSequence ? openLastIndex : openLastIndex * 2
 const lastName = `frame-${String(manifest.count).padStart(3, '0')}.webp`
 const stillSrc = `${lg.dir}/${lastName}`
 const stillSrcset = `${sm.dir}/${lastName} ${sm.width}w, ${stillSrc} ${lg.width}w`
@@ -137,9 +143,13 @@ function render() {
   if (!canvas || !context2d || !backdrop2d || !canvas.width || !canvas.height) return
 
   const playbackIndex = Math.min(lastIndex, Math.max(0, Math.round(playhead.frame)))
-  // Passado o pico da vista explodida, o índice espelha: a central remonta
-  // reaproveitando os mesmos arquivos ao contrário.
-  const sourceIndex = playbackIndex <= openLastIndex ? playbackIndex : lastIndex - playbackIndex
+  // Passado o pico da vista explodida, o índice espelha (fonte antiga, ida+volta);
+  // na fonte linear o índice já é o frame físico direto.
+  const sourceIndex = isLinearSequence
+    ? playbackIndex
+    : playbackIndex <= openLastIndex
+      ? playbackIndex
+      : lastIndex - playbackIndex
   const collection = teardownFrames
   const index = nearestLoaded(collection, sourceIndex)
   if (index < 0) return
@@ -345,23 +355,29 @@ async function setupMotion() {
           },
         })
 
-        // 0–4% montada · 4–48% abrindo · 48–72% vista explodida em cena ·
-        // 72–94% remontando · 94–100% CTA.
-        timeline.to(playhead, { frame: openLastIndex, duration: 0.44 }, 0.04)
-        timeline.to(playhead, { frame: lastIndex, duration: 0.22 }, 0.72)
-        timeline.fromTo(
-          view,
-          { zoom: zoom.from, y: 6 },
-          { zoom: zoom.to, y: -6, duration: 0.44 },
-          0.04,
-        )
-        timeline.to(view, { zoom: zoom.from, y: 6, duration: 0.22 }, 0.72)
-        // O véu entra junto com a abertura: da vista explodida em diante o frame
-        // fica claro e o texto branco perdia contraste sobre as peças.
-        timeline.to(ctaScrimEl.value, { autoAlpha: 1, duration: 0.08 }, 0.26)
-        // Afasta a central no fim para o CTA respirar, e garante que a timeline
-        // tenha exatamente 100% de duração.
-        timeline.to(view, { zoom: ctaZoom, y: 18, duration: 0.06 }, 0.94)
+        // TESTE (fonte linear): 0–4% montada · 4–90% avança pelo arco inteiro
+        // (abrindo -> explodida -> remontando -> tela ligada) · 90–100% CTA.
+        // A fonte antiga (ida+volta) mantém o comportamento de duas fases abaixo.
+        if (isLinearSequence) {
+          timeline.to(playhead, { frame: lastIndex, duration: 0.84 }, 0.04)
+          timeline.fromTo(view, { zoom: zoom.from, y: 6 }, { zoom: zoom.to, y: -4, duration: 0.86 }, 0.04)
+          // A tampa já abre larga e clara por volta do frame 10/40 (~f=0.24):
+          // o véu precisa estar plenamente ligado ANTES disso, não só a partir dele.
+          timeline.to(ctaScrimEl.value, { autoAlpha: 1, duration: 0.06 }, 0.1)
+          timeline.to(view, { zoom: ctaZoom, y: 18, duration: 0.06 }, 0.9)
+        } else {
+          timeline.to(playhead, { frame: openLastIndex, duration: 0.44 }, 0.04)
+          timeline.to(playhead, { frame: lastIndex, duration: 0.22 }, 0.72)
+          timeline.fromTo(
+            view,
+            { zoom: zoom.from, y: 6 },
+            { zoom: zoom.to, y: -6, duration: 0.44 },
+            0.04,
+          )
+          timeline.to(view, { zoom: zoom.from, y: 6, duration: 0.22 }, 0.72)
+          timeline.to(ctaScrimEl.value, { autoAlpha: 1, duration: 0.08 }, 0.26)
+          timeline.to(view, { zoom: ctaZoom, y: 18, duration: 0.06 }, 0.94)
+        }
 
         chapters.forEach((chapter, index) => {
           const el = chapterEls[index]
