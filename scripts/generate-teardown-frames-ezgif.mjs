@@ -75,9 +75,18 @@ async function borderColor(input, width, height) {
   })))
 }
 
+// 041-042 vieram em inglês e unidade imperial ("Turn right onto Main St",
+// "500 ft", "2.3 mi", "10:32 AM") — os únicos dois frames assim em toda a
+// sequência. 043-044 já mostram a mesma família de tela em português, então
+// pula-se direto do mapa (040) para a tela "Início" (043), sem tentar remendar
+// texto em inglês com sobreposição. Os arquivos originais continuam em
+// assets-src/ para quem quiser reverter isto.
+const EXCLUDE = new Set(['ezgif-frame-041.png', 'ezgif-frame-042.png'])
+
 const sources = fs
   .readdirSync(sourceDir)
   .filter((file) => {
+      if (EXCLUDE.has(file)) return false
       const lower = file.toLowerCase()
       if (!lower.startsWith('ezgif-frame-')) return false
       return ['.jpg', '.jpeg', '.png'].some((ext) => lower.endsWith(ext))
